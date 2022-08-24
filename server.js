@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
 const express     = require('express');
+const helmet = require('helmet');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
 
@@ -9,6 +10,18 @@ const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const app = express();
+
+// Sets "Content-Security-Policy: default-src 'self';script-src 'self' trusted-cdn.com;object-src 'none';upgrade-insecure-requests"
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "trusted-cdn.com"],
+      styleSrc: ["'self'"]
+    },
+  })
+);
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
